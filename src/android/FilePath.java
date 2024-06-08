@@ -50,9 +50,16 @@ public class FilePath extends CordovaPlugin {
     public static final String READ = Manifest.permission.READ_EXTERNAL_STORAGE;
 
     protected void getReadPermission(int requestCode) {
-        PermissionHelper.requestPermission(this, requestCode, READ);
+        String readPermission;
+        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            readPermission = Manifest.permission.READ_MEDIA_VIDEO;
+        } else {
+            readPermission = Manifest.permission.READ_EXTERNAL_STORAGE;
+        }
+        PermissionHelper.requestPermission(this, requestCode, readPermission);
     }
 
+    @Override
     public void initialize(CordovaInterface cordova, final CordovaWebView webView) {
         super.initialize(cordova, webView);
     }
@@ -122,7 +129,7 @@ public class FilePath extends CordovaPlugin {
         }
     }
 
-
+    @Override
     public void onRequestPermissionResult(int requestCode, String[] permissions, int[] grantResults) throws JSONException {
         for (int r : grantResults) {
             if (r == PackageManager.PERMISSION_DENIED) {
